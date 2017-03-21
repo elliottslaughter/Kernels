@@ -114,11 +114,11 @@ int main(int argc, char ** argv) {
   DTYPE *left_buf_out;    /*       "         "                                   */
   DTYPE *left_buf_in;     /*       "         "                                   */
   int    root = 0;
-  int    n, width, height;/* linear global and local grid dimension              */
-  long   nsquare;         /* total number of grid points                         */
-  int    i, j, ii, jj, kk, it, jt, iter, leftover;  /* dummies                   */
-  int    istart, iend;    /* bounds of grid tile assigned to calling rank        */
-  int    jstart, jend;    /* bounds of grid tile assigned to calling rank        */
+  long long n, width, height;/* linear global and local grid dimension           */
+  long long nsquare;      /* total number of grid points                         */
+  long long i, j, ii, jj, kk, it, jt, iter, leftover;  /* dummies                */
+  long long istart, iend; /* bounds of grid tile assigned to calling rank        */
+  long long jstart, jend; /* bounds of gdrid tile assigned to calling rank       */
   DTYPE  norm,            /* L1 norm of solution                                 */
          local_norm,      /* contribution of calling rank to L1 norm             */
          reference_norm;
@@ -133,8 +133,8 @@ int main(int argc, char ** argv) {
          nthread;
   DTYPE  * RESTRICT in;   /* input grid values                                   */
   DTYPE  * RESTRICT out;  /* output grid values                                  */
-  long   total_length_in; /* total required length to store input array          */
-  long   total_length_out;/* total required length to store output array         */
+  long long   total_length_in; /* total required length to store input array     */
+  long long   total_length_out;/* total required length to store output array    */
   int    error=0;         /* error flag                                          */
   DTYPE  weight[2*RADIUS+1][2*RADIUS+1]; /* weights of points in the stencil     */
   MPI_Request request[8];
@@ -183,7 +183,7 @@ int main(int argc, char ** argv) {
     }
 
     n       = atoi(*++argv);
-    nsquare = (long) n * (long) n;
+    nsquare = (long long) n * (long long) n;
     if (nsquare < Num_procs){
       printf("ERROR: grid size %ld must be at least # ranks: %d\n",
 	     nsquare, Num_procs);
@@ -219,7 +219,7 @@ int main(int argc, char ** argv) {
   bottom_nbr = my_ID-Num_procsx;
 
 
-  MPI_Bcast(&n,             1, MPI_INT, root, MPI_COMM_WORLD);
+  MPI_Bcast(&n,             1, MPI_LONG_LONG, root, MPI_COMM_WORLD);
   MPI_Bcast(&iterations,    1, MPI_INT, root, MPI_COMM_WORLD);
   MPI_Bcast(&nthread_input, 1, MPI_INT, root, MPI_COMM_WORLD);
 
